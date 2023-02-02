@@ -39,6 +39,11 @@ int main()
       j--;
     }
     arr[j + 1] = temp;
+    if ((double)(clock() - start) / CLOCKS_PER_SEC > 180.0)
+    {
+      printf("Time limit exceeded\n");
+      return 1;
+    }
   }
   end = clock();
 
