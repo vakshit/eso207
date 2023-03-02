@@ -1,212 +1,124 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <math.h>
-const int SIZE = 2;
 
-int mx(int arr[], int n)
+void strassen(int n, int A[][n], int B[][n], int C[][n])
 {
-  int max = arr[0];
-  for (int i = 1; i < n; i++)
-  {
-    if (arr[i] > max)
+    if (n == 1)
     {
-      max = arr[i];
+        C[0][0] = A[0][0] * B[0][0];
+        return;
     }
-  }
-  return max;
-}
-
-int nextpowerof2(int k)
-{
-  return pow(2, ceil(log2(k)));
-}
-
-void display(int matrix[SIZE][SIZE])
-{
-  for (int i = 0; i < SIZE; i++)
-  {
-    for (int j = 0; j < SIZE; j++)
-    {
-      if (j != 0)
-      {
-        printf("\t");
-      }
-      printf("%d ", matrix[i][j]);
-    }
-    printf("\n");
-  }
-}
-
-void add(int A[SIZE][SIZE], int B[SIZE][SIZE], int C[SIZE][SIZE], int size)
-{
-  int i, j;
-  for (i = 0; i < size; i++)
-  {
-    for (j = 0; j < size; j++)
-    {
-      C[i][j] = A[i][j] + B[i][j];
-    }
-  }
-}
-
-void sub(int A[SIZE][SIZE], int B[SIZE][SIZE], int C[SIZE][SIZE], int size)
-{
-  int i, j;
-  for (i = 0; i < size; i++)
-  {
-    for (j = 0; j < size; j++)
-    {
-      C[i][j] = A[i][j] - B[i][j];
-    }
-  }
-}
-
-void Strassen_algorithmA(int A[SIZE][SIZE], int B[SIZE][SIZE], int C[SIZE][SIZE], int size)
-
-{
-  // base case
-  if (size == 1)
-  {
-    C[0][0] = A[0][0] * B[0][0];
-    return;
-  }
-  else
-  {
-    int new_size = size / 2;
-    int z[new_size];
-    int a11[new_size][new_size], a12[new_size][new_size], a21[new_size][new_size], a22[new_size][new_size],
-        b11[new_size][new_size], b12[new_size][new_size], b21[new_size][new_size], b22[new_size][new_size],
-        c11[new_size][new_size], c12[new_size][new_size], c21[new_size][new_size], c22[new_size][new_size],
-        p1[new_size][new_size], p2[new_size][new_size], p3[new_size][new_size], p4[new_size][new_size],
-        p5[new_size][new_size], p6[new_size][new_size], p7[new_size][new_size],
-        aResult[new_size][new_size], bResult[new_size][new_size];
 
     int i, j;
+    int m = n / 2;
+    int A11[m][m], A12[m][m], A21[m][m], A22[m][m];
+    int B11[m][m], B12[m][m], B21[m][m], B22[m][m];
+    int C11[m][m], C12[m][m], C21[m][m], C22[m][m];
+    int P1[m][m], P2[m][m], P3[m][m], P4[m][m], P5[m][m], P6[m][m], P7[m][m];
+    int temp1[m][m], temp2[m][m];
 
-    // dividing the matrices into sub-matrices:
-    for (i = 0; i < new_size; i++)
+    for (i = 0; i < m; i++)
     {
-      for (j = 0; j < new_size; j++)
-      {
-        a11[i][j] = A[i][j];
-        a12[i][j] = A[i][j + new_size];
-        a21[i][j] = A[i + new_size][j];
-        a22[i][j] = A[i + new_size][j + new_size];
-
-        b11[i][j] = B[i][j];
-        b12[i][j] = B[i][j + new_size];
-        b21[i][j] = B[i + new_size][j];
-        b22[i][j] = B[i + new_size][j + new_size];
-      }
+        for (j = 0; j < m; j++)
+        {
+            A11[i][j] = A[i][j];
+            A12[i][j] = A[i][j + m];
+            A21[i][j] = A[i + m][j];
+            A22[i][j] = A[i + m][j + m];
+            B11[i][j] = B[i][j];
+            B12[i][j] = B[i][j + m];
+            B21[i][j] = B[i + m][j];
+            B22[i][j] = B[i + m][j + m];
+        }
     }
 
-    // Calculating p1 to p7:
+    strassen(m, A11, B11, P1);
+    strassen(m, A12, B21, P2);
+    strassen(m, A11, B12, P3);
+    strassen(m, A12, B22, P4);
+    strassen(m, A21, B11, P5);
+    strassen(m, A22, B21, P6);
+    strassen(m, A21, B12, P7);
 
-    add(a11, a22, aResult, new_size); // a11 + a22
-    add(b11, b22, bResult, new_size); // b11 + b22
-    Strassen_algorithmA(aResult, bResult, p1, new_size);
-    // p1 = (a11+a22) * (b11+b22)
-
-    add(a21, a22, aResult, new_size); // a21 + a22
-    Strassen_algorithmA(aResult, b11, p2, new_size);
-    // p2 = (a21+a22) * (b11)
-
-    sub(b12, b22, bResult, new_size); // b12 - b22
-    Strassen_algorithmA(a11, bResult, p3, new_size);
-    // p3 = (a11) * (b12 - b22)
-
-    sub(b21, b11, bResult, new_size); // b21 - b11
-    Strassen_algorithmA(a22, bResult, p4, new_size);
-    // p4 = (a22) * (b21 - b11)
-
-    add(a11, a12, aResult, new_size); // a11 + a12
-    Strassen_algorithmA(aResult, b22, p5, new_size);
-    // p5 = (a11+a12) * (b22)
-
-    sub(a21, a11, aResult, new_size); // a21 - a11
-    add(b11, b12, bResult, new_size);
-    // b11 + b12
-    Strassen_algorithmA(aResult, bResult, p6, new_size);
-    // p6 = (a21-a11) * (b11+b12)
-
-    sub(a12, a22, aResult, new_size); // a12 - a22
-    add(b21, b22, bResult, new_size);
-    // b21 + b22
-    Strassen_algorithmA(aResult, bResult, p7, new_size);
-    // p7 = (a12-a22) * (b21+b22)
-
-    // calculating c21, c21, c11 e c22:
-
-    add(p3, p5, c12, new_size); // c12 = p3 + p5
-    add(p2, p4, c21, new_size); // c21 = p2 + p4
-
-    add(p1, p4, aResult, new_size);      // p1 + p4
-    add(aResult, p7, bResult, new_size); // p1 + p4 + p7
-    sub(bResult, p5, c11, new_size);     // c11 = p1 + p4 - p5 + p7
-
-    add(p1, p3, aResult, new_size);      // p1 + p3
-    add(aResult, p6, bResult, new_size); // p1 + p3 + p6
-    sub(bResult, p2, c22, new_size);     // c22 = p1 + p3 - p2 + p6
-
-    // Grouping the results obtained in a single matrix:
-    for (i = 0; i < new_size; i++)
+    for (i = 0; i < m; i++)
     {
-      for (j = 0; j < new_size; j++)
-      {
-        C[i][j] = c11[i][j];
-        C[i][j + new_size] = c12[i][j];
-        C[i + new_size][j] = c21[i][j];
-        C[i + new_size][j + new_size] = c22[i][j];
-      }
+        for (j = 0; j < m; j++)
+        {
+            temp1[i][j] = P1[i][j] + P2[i][j];
+            temp2[i][j] = P3[i][j] + P4[i][j];
+            C11[i][j] = temp1[i][j] + temp2[i][j];
+            C21[i][j] = P5[i][j] + P6[i][j];
+            C12[i][j] = P1[i][j] + P3[i][j];
+            C22[i][j] = P2[i][j] + P4[i][j] + P7[i][j];
+        }
     }
-  }
-}
 
-
-void Strassen_algorithm(int A[SIZE][SIZE], int B[SIZE][SIZE], int m, int n, int a, int b)
-{
-  /* Check to see if these matrices are already square and have dimensions of a power of 2. If not,
-   * the matrices must be resized and padded with zeroes to meet this criteria. */
-  int temp_arr[] = {m, n, a, b};
-  int k = mx(temp_arr, 4);
-
-  int s = nextpowerof2(k);
-
-  int Aa[s][s], Bb[s][s], Cc[s][s];
-
-  for (unsigned int i = 0; i < m; i++)
-  {
-    for (unsigned int j = 0; j < n; j++)
+    for (i = 0; i < m; i++)
     {
-      Aa[i][j] = A[i][j];
+        for (j = 0; j < m; j++)
+        {
+            C[i][j] = C11[i][j];
+            C[i][j + m] = C12[i][j];
+            C[i + m][j] = C21[i][j];
+            C[i + m][j + m] = C22[i][j];
+        }
     }
-  }
-  for (unsigned int i = 0; i < a; i++)
-  {
-    for (unsigned int j = 0; j < b; j++)
-    {
-      Bb[i][j] = B[i][j];
-    }
-  }
-  Strassen_algorithmA(Aa, Bb, Cc, s);
-  // int temp1[b];
-  int C[m][b];
-  for (unsigned int i = 0; i < m; i++)
-  {
-    for (unsigned int j = 0; j < b; j++)
-    {
-      C[i][j] = Cc[i][j];
-    }
-  }
-  display(C);
+
+    return;
 }
 
 int main()
 {
-  // Your code goes here;
-  int a[2][2] = {{1, 0}, {0, 1}};
-  int b[2][2] = {{-1, 0}, {0, -1}};
-  Strassen_algorithm(a, b, 3, 3, 3, 3);
-  return 0;
+    int i, j, n, temp;
+    srand(time(0));
+
+    clock_t start, end;
+
+    FILE *filePtr = fopen("randomStrassenNumbers.txt", "r");
+    if (filePtr == NULL)
+    {
+        printf("Error opening file randomStrassenNumbers.txt!\n");
+        return 1;
+    }
+
+    fscanf(filePtr, "%d\n", &n);
+    int A[n][n], B[n][n], C[n][n];
+
+    for (i = 0; i < n; i++)
+    {
+        for (j = 0; j < n; j++)
+        {
+            fscanf(filePtr, "%d ", &A[i][j]);
+        }
+    }
+    fscanf(filePtr, "\n");
+    for (i = 0; i < n; i++)
+    {
+        for (j = 0; j < n; j++)
+        {
+            fscanf(filePtr, "%d ", &B[i][j]);
+        }
+    }
+    fclose(filePtr);
+
+    filePtr = fopen("multipledMatrix.txt", "w");
+
+    start = clock();
+    strassen(n, A, B, C);
+    end = clock();
+
+    for (i = 0; i < n; i++)
+    {
+        for (j = 0; j < n; j++)
+        {
+            fprintf(filePtr, "%d ", C[i][j]);
+        }
+        fprintf(filePtr, "\n");
+    }
+
+    printf("Multiplied matrix stored in multipledMatrix.txt!\n");
+    printf("Runtime: %.6lf seconds\n\n", (double)(end - start) / CLOCKS_PER_SEC);
+
+    return 0;
 }

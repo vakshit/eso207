@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define MIN 0
-#define MAX 1000000
+#define MAX 100
 
 int main(int argc, char **argv)
 {

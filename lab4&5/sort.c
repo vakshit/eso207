@@ -17,20 +17,23 @@ int min(int x, int y)
 
 int partition(int arr[], int low, int high)
 {
-    int randomIndex = low + rand() % (high - low + 1);
-    swap(&arr[randomIndex], &arr[high]);
+    // int randomIndex = low + rand() % (high - low + 1);
+    // swap(&arr[randomIndex], &arr[high]);
     int pivot = arr[high];
-    int i = low - 1;
+    int i = low;
     for (int j = low; j <= high - 1; j++)
     {
         if (arr[j] <= pivot)
         {
-            i++;
             swap(&arr[i], &arr[j]);
+            i++;
         }
     }
-    swap(&arr[i + 1], &arr[high]);
-    return (i + 1);
+    swap(&arr[i], &arr[high]);
+    for (int i = 0; i < 10; i++)
+        printf("%d ", arr[i]);
+    printf("\n");
+    return (i);
 }
 
 void quickSort(int arr[], int low, int high)

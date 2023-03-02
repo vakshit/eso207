@@ -43,6 +43,9 @@ void heapSort(int arr[], int n)
   {
     heapify(arr, n, i);
   }
+  for (int i=0; i<n; ++i)
+    printf("%d ",arr[i]);
+  printf("\n");
 
   for (int i = n - 1; i >= 0; i--)
   {
@@ -84,7 +87,7 @@ int main()
 
   // Print the sorted numbers
   printf("Sorted numbers:\n");
-  for (i = 0; i < n; i += 10000)
+  for (i = 0; i < n; i += 1)
   {
     printf("%d\n", arr[i]);
   }
