@@ -5,7 +5,7 @@ Node *newNode(int data)
 {
   Node *node = (Node *)malloc(sizeof(Node));
   node->data = data;
-  node->rank = 0;
+  node->rank = 1;
   node->left = NULL;
   node->right = NULL;
   return node;
