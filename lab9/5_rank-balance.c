@@ -1,13 +1,5 @@
 #include "print.h"
 
-// typedef struct Node
-// {
-//   int data;           // Data value of the node
-//   int rank;           // Rank of the node
-//   struct Node *left;  // Pointer to left child
-//   struct Node *right; // Pointer to right child
-// } Node;
-
 // Create a new node with the given data value
 Node *newNode(int data)
 {
@@ -132,60 +124,6 @@ Node *findMin(Node *node)
   }
   return node;
 }
-
-// // Delete the node with the given data value from the tree rooted at node
-// Node *delete(Node *node, int data)
-// {
-//   if (node == NULL)
-//   {
-//     return node;
-//   }
-//   else if (data < node->data)
-//   {
-//     node->left = delete (node->left, data);
-//     updateRank(node);
-//     if (getRank(node->right) > getRank(node->left) + 1)
-//     {
-//       node = balance(node);
-//     }
-//   }
-//   else if (data > node->data)
-//   {
-//     node->right = delete (node->right, data);
-//     updateRank(node);
-//     if (getRank(node->left) > getRank(node->right) + 1)
-//     {
-//       node = balance(node);
-//     }
-//   }
-//   else
-//   {
-//     if (node->left == NULL)
-//     {
-//       Node *rightChild = node->right;
-//       free(node);
-//       return rightChild;
-//     }
-//     else if (node->right == NULL)
-//     {
-//       Node *leftChild = node->left;
-//       free(node);
-//       return leftChild;
-//     }
-//     else
-//     {
-//       Node *minNode = findMin(node->right);
-//       node->data = minNode->data;
-//       node->right = delete (node->right, minNode->data);
-//       updateRank(node);
-//       if (getRank(node->left) > getRank(node->right) + 1)
-//       {
-//         node = balance(node);
-//       }
-//     }
-//   }
-//   return node;
-// }
 
 // Delete the node with the given data value from the tree rooted at node
 Node *delete(Node *node, int data)
