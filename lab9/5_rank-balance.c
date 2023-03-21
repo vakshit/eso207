@@ -133,57 +133,137 @@ Node *findMin(Node *node)
   return node;
 }
 
+// // Delete the node with the given data value from the tree rooted at node
+// Node *delete(Node *node, int data)
+// {
+//   if (node == NULL)
+//   {
+//     return node;
+//   }
+//   else if (data < node->data)
+//   {
+//     node->left = delete (node->left, data);
+//     updateRank(node);
+//     if (getRank(node->right) > getRank(node->left) + 1)
+//     {
+//       node = balance(node);
+//     }
+//   }
+//   else if (data > node->data)
+//   {
+//     node->right = delete (node->right, data);
+//     updateRank(node);
+//     if (getRank(node->left) > getRank(node->right) + 1)
+//     {
+//       node = balance(node);
+//     }
+//   }
+//   else
+//   {
+//     if (node->left == NULL)
+//     {
+//       Node *rightChild = node->right;
+//       free(node);
+//       return rightChild;
+//     }
+//     else if (node->right == NULL)
+//     {
+//       Node *leftChild = node->left;
+//       free(node);
+//       return leftChild;
+//     }
+//     else
+//     {
+//       Node *minNode = findMin(node->right);
+//       node->data = minNode->data;
+//       node->right = delete (node->right, minNode->data);
+//       updateRank(node);
+//       if (getRank(node->left) > getRank(node->right) + 1)
+//       {
+//         node = balance(node);
+//       }
+//     }
+//   }
+//   return node;
+// }
+
 // Delete the node with the given data value from the tree rooted at node
 Node *delete(Node *node, int data)
 {
-  if (node == NULL)
+  Node *parent = NULL;
+  Node *current = node;
+
+  while (current != NULL && current->data != data)
   {
-    return node;
-  }
-  else if (data < node->data)
-  {
-    node->left = delete (node->left, data);
-    updateRank(node);
-    if (getRank(node->right) > getRank(node->left) + 1)
+    parent = current;
+    if (data < current->data)
     {
-      node = balance(node);
-    }
-  }
-  else if (data > node->data)
-  {
-    node->right = delete (node->right, data);
-    updateRank(node);
-    if (getRank(node->left) > getRank(node->right) + 1)
-    {
-      node = balance(node);
-    }
-  }
-  else
-  {
-    if (node->left == NULL)
-    {
-      Node *rightChild = node->right;
-      free(node);
-      return rightChild;
-    }
-    else if (node->right == NULL)
-    {
-      Node *leftChild = node->left;
-      free(node);
-      return leftChild;
+      current = current->left;
     }
     else
     {
-      Node *minNode = findMin(node->right);
-      node->data = minNode->data;
-      node->right = delete (node->right, minNode->data);
-      updateRank(node);
-      if (getRank(node->left) > getRank(node->right) + 1)
-      {
-        node = balance(node);
-      }
+      current = current->right;
     }
   }
+
+  if (current == NULL)
+  {
+    return node;
+  }
+
+  if (current->left == NULL && current->right == NULL)
+  {
+    if (parent == NULL)
+    {
+      free(current);
+      return NULL;
+    }
+    else if (current == parent->left)
+    {
+      parent->left = NULL;
+    }
+    else
+    {
+      parent->right = NULL;
+    }
+    free(current);
+  }
+  else if (current->left == NULL || current->right == NULL)
+  {
+    Node *child = current->left ? current->left : current->right;
+    if (parent == NULL)
+    {
+      *node = *child;
+    }
+    else if (current == parent->left)
+    {
+      parent->left = child;
+    }
+    else
+    {
+      parent->right = child;
+    }
+    free(current);
+  }
+  else
+  {
+    Node *successor = findMin(current->right);
+    current->data = successor->data;
+    current->right = delete (current->right, successor->data);
+  }
+
+  if (node == NULL)
+  {
+    return NULL;
+  }
+
+  updateRank(node);
+
+  if (getRank(node->left) > getRank(node->right) + 1)
+  {
+    node = balance(node);
+  }
+
   return node;
 }
 
